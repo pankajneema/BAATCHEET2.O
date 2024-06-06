@@ -9,7 +9,7 @@ const FriendRequest = ({ item,friendRequests ,setFriendRequests }) => {
     const navigation = useNavigation();
     const deleteFriendRequest = async (friendRequestId) => {
         try{
-            const response = await fetch("http://192.168.0.172:8000/friend-request/delete",
+            const response = await fetch("http://192.168.2.190:8000/friend-request/delete",
             {
                 method: "POST",
                 headers: {
@@ -38,7 +38,7 @@ const FriendRequest = ({ item,friendRequests ,setFriendRequests }) => {
     const acceptFriendRequest = async (friendRequestId) => {
         try{
           console.log("STRATED================");
-            const response = await fetch("http://192.168.0.172:8000/friend-request/accept",
+            const response = await fetch("http://192.168.2.190:8000/friend-request/accept",
             {
                 method: "POST",
                 headers: {

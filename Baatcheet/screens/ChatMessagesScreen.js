@@ -1,14 +1,4 @@
-import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    KeyboardAvoidingView,
-    TextInput,
-    Pressable,
-    Image,
-    Alert,
-  } from "react-native";
+import {StyleSheet,Text,View,ScrollView,KeyboardAvoidingView,TextInput,Pressable,Image,Alert} from "react-native";
   import React, { useState, useContext, useLayoutEffect, useEffect,useRef } from "react";
   import { Feather } from "@expo/vector-icons";
   import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +9,7 @@ import {
   import { userType } from "../UserContext";
   import { useNavigation, useRoute } from "@react-navigation/native";
   import * as ImagePicker from "expo-image-picker";
+  import WebSocketService from '../utility/WebSocketService';
 
   const ChatMessagesScreen = () => {
     const [showEmojiSelector, setShowEmojiSelector] = useState(false);
@@ -34,16 +25,17 @@ import {
   
     const scrollViewRef = useRef(null);
   
-    useEffect(() => {
-      scrollToBottom()
-    },[]);
+    
   
     const scrollToBottom = () => {
         if(scrollViewRef.current){
             scrollViewRef.current.scrollToEnd({animated:false})
         }
     }
-  
+    useEffect(() => {
+      scrollToBottom()
+    },[]);
+
     const handleContentSizeChange = () => {
         scrollToBottom();
     }
@@ -52,12 +44,11 @@ import {
       setShowEmojiSelector(!showEmojiSelector);
     };
   
-  
-  
-    const fetchMessages = async () => {
+  // fetch  message from database 
+  const fetchMessages = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.172:8000/messages/${userId}/${recepientId}`
+          `http://192.168.2.190:8000/messages/${userId}/${recepientId}`
         );
         const data = await response.json();
   
@@ -76,11 +67,12 @@ import {
       console.log("messages_pnkj",messages)
     }, []);
   
+    //use Effect to recepient data 
     useEffect(() => {
       const fetchRecepientData = async () => {
         try {
           const response = await fetch(
-            `http://192.168.0.172:8000/user/${recepientId}`
+            `http://192.168.2.190:8000/user/${recepientId}`
           );
   
           const data = await response.json();
@@ -92,14 +84,15 @@ import {
   
       fetchRecepientData();
     }, []);
+
+
     const handleSend = async (messageType, imageUri) => {
       try {
         const formData = new FormData();
         formData.append("senderId", userId);
         formData.append("recepientId", recepientId);
-        console.log("in sending image");
-        console.log(imageUri);
-
+         
+        console.log(message)
         if (message || imageUri){
         //if the message type id image or a normal text
         if (messageType === "image") {
@@ -110,16 +103,19 @@ import {
             type: "image/jpeg",
           });
         } else {
+          console.log("|<---------{ Sending Message }---------->|")
           formData.append("messageType", "text");
           formData.append("messageText", message);
+          const websocket_message = {"messaging_product": "baatcheet", "recipient_type": "individual","senderId":{"_id":userId},"recepientId":recepientId, "type": "text", "text": { "body": message } }
+          WebSocketService.sendMessage(websocket_message)
         }
-        console.log("=============");
-        const response = await fetch("http://192.168.0.172:8000/messages", {
+        const response = await fetch("http://192.168.2.190:8000/messages", {
           method: "POST",
           body: formData,
         });
         
-        console.log("Res---",response)
+       
+        console.log("|<---------{ Sending Message Completed }---------->|")
         if (response.ok) {
           setMessage("");
           setSelectedImage("");
@@ -195,7 +191,7 @@ import {
   
     const deleteMessages = async (messageIds) => {
       try {
-        const response = await fetch("http://192.168.0.172:8000/deleteMessages", {
+        const response = await fetch("http://192.168.2.190:8000/deleteMessages", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

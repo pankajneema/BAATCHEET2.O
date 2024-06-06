@@ -34,14 +34,14 @@ const HomeScreen = () => {
                 console.log("User ID:", userId);
                 
                 // Once userId is set, proceed with making the API call
-                await axios.get(`http://192.168.0.172:8000/users/${userId}`).then((response) => {
+                await axios.get(`http://192.168.2.190:8000/users/${userId}`).then((response) => {
                     console.log("Get All User Api Response == " + JSON.stringify(response.data));
                     setUsers(response.data);
                 }).catch((error) => {
                     console.log("User error retrieving users Api == " + error);
                 });
 
-              await axios.get(`http://192.168.0.172:8000/profile-image/${userId}`).then((response) => {
+              await axios.get(`http://192.168.2.190:8000/profile-image/${userId}`).then((response) => {
                     console.log("Get User Profile Iameg URL == " + JSON.stringify(response.data));
                     setProfileImage(response.data);
                 }).catch((error) => {

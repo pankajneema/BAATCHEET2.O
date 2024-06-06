@@ -17,7 +17,7 @@ const ProfileScreen = () => {
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-
+  const [mobile, setMobile] = useState('');
 
   const handleNameChange = (inputText) => {
     setName(inputText);
@@ -33,13 +33,14 @@ const ProfileScreen = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://192.168.0.172:8000/user/${userId}`
+          `http://192.168.2.190:8000/user/${userId}`
         );
 
         const data = await response.json();
         setUserData(data);
         setName(data.name)
         setEmail(data.email)
+        setMobile(data.mobile)
       } catch (error) {
         console.log("error retrieving details", error);
       }
@@ -134,7 +135,7 @@ const ProfileScreen = () => {
             </View>
             <TextInput
                 style={{  marginRight:screenHeight * 0.13,marginLeft:screenHeight * 0.11, borderBottomWidth: 0, paddingHorizontal:5 ,fontSize:20,fontWeight:"bold"}}
-                value="+91 8171268630"
+                value= {mobile}
                 // onChangeText={handleEmailChange} TODO PANKAJ ADD PHONE NUMBER
                 placeholder="Your Phone Number"
             />

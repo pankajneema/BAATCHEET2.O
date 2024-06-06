@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, ViewBase, TextInput, Pressable } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import WebSocketService from '../utility/WebSocketService'// Adjust the path as per your project structure
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const LoginScreen = () => {
             try {
                 const token = await AsyncStorage.getItem('authToken');
                 if (token) {
+                    WebSocketService.connect(token);
                     navigation.replace("Home");
                 }
             } catch (error) {
@@ -34,15 +36,15 @@ const LoginScreen = () => {
          }
     
          //Hit Login api 
-    axios.post("http://192.168.0.172:8000/login",user).then((response) => {
+    axios.post("http://192.168.2.190:8000/login",user).then((response) => {
             console.log("User login Api Response == "+JSON.stringify(response.data));
-            const token = response.data.token;
+            const response_data = response.data; // No need to stringify here
+            console.log(response_data);
+            const token = response_data.token; 
             AsyncStorage.setItem("authToken",token)
-
+            WebSocketService.connect(token);
             navigation.replace("Home");
-      }).catch((error) => {
-          console.log("User Login Error From Api == "+ error);
-      })  
+      }) 
     }
     catch(err){
         console.log("Error in login -- ",err);

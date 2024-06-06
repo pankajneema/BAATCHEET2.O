@@ -20,7 +20,7 @@ const RegisterScreen = () => {
         }
         console.log(user);
         // hit user registration api
-        axios.post("http://192.168.0.172:8000/register",user).then((response) => {
+        axios.post("http://192.168.2.190:8000/register",user).then((response) => {
             console.log("User Registration Api Response == " + JSON.stringify(response.data));
               Alert.alert("Registration Successfull",
               "You have been registered successfully");
